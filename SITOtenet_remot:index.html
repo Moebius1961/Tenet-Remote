@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>TENET Remote · Telegram</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+  <!-- Stile "app" iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="TENET Remote">
+
+  <style>
+    :root {
+      --accent: #32e676;
+      --accent-dark: #0c9a44;
+      --bg1: #020305;
+      --bg2: #0b141a;
+      --text-soft: rgba(255,255,255,0.75);
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+      background: radial-gradient(circle at top, #101820, #020305 60%);
+      color: #fff;
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      overflow-y: auto;
+      display: block;
+    }
+
+    /* Splash iniziale */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, #00ff88 0%, #020305 55%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      animation: fadeOut 1.2s ease 1.2s forwards;
+    }
+    #splash .logo {
+      border-radius: 32px;
+      padding: 26px 34px;
+      background: rgba(0,0,0,0.7);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+      text-align: center;
+    }
+    #splash .logo-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 0.32em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    #splash .logo-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+    }
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(0,0,0,0.8));
+      border-radius: 0;
+      padding: 20px 18px 24px;
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      box-shadow: none;
+      backdrop-filter: blur(18px);
+      display: flex;
+      flex-direction: column;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0;
+      font-weight: 700;
+    }
+    h2 {
+      font-size: 13px;
+      margin: 2px 0 0;
+      color: var(--text-soft);
+      font-weight: 400;
+    }
+    .chip {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: radial-gradient(circle at top left, rgba(50,230,118,0.3), rgba(0,0,0,0.8));
+      color: var(--text-soft);
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .status-block {
+      margin-top: 4px;
+      border-radius: 18px;
+      padding: 12px 12px 10px;
+      background: radial-gradient(circle at top left, rgba(0,0,0,0.4), rgba(0,0,0,0.9));
+      font-size: 13px;
+    }
+    .status-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
+    }
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .badge-remote {
+      background: rgba(10, 132, 255, 0.18);
+      color: #0a84ff;
+    }
+    .badge-note {
+      background: rgba(174, 174, 178, 0.25);
+      color: #d1d1d6;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    button {
+      flex: 1;
+      border: none;
+      border-radius: 18px;
+      padding: 11px 0;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.15s ease;
+    }
+    .btn-on {
+      background: linear-gradient(135deg, #32e676, #0c9a44);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(50,230,118,0.4);
+    }
+    .btn-off {
+      background: linear-gradient(135deg, #ff3b30, #b51f18);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(255,59,48,0.45);
+    }
+    .btn-status {
+      background: linear-gradient(135deg, #0a84ff, #0051a8);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(10,132,255,0.45);
+    }
+    .btn-sensor {
+      background: linear-gradient(135deg, #ff9f0a, #c86c00);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(255,159,10,0.45);
+    }
+    button:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+      opacity: 0.9;
+    }
+
+    .log-block {
+      margin-top: 18px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(9,12,16,0.9), rgba(0,0,0,0.95));
+      font-size: 12px;
+      min-height: 60px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .log-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
+    }
+    .log-line {
+      margin-bottom: 4px;
+      color: rgba(255,255,255,0.8);
+    }
+    .log-line span.time {
+      opacity: 0.65;
+      font-size: 11px;
+      margin-right: 6px;
+    }
+
+    .foot {
+      margin-top: auto;
+      font-size: 10px;
+      opacity: 0.7;
+      text-align: center;
+      padding-top: 12px;
+    }
+
+    a.remote-link {
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      height: 100%;
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+  <!-- Splash TENET -->
+  <div id="splash">
+    <div class="logo">
+      <div class="logo-title">TENET</div>
+      <div class="logo-sub">Remote · Controllo via Telegram</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h1>TENET Remote</h1>
+        <h2>Controllo LED &amp; Stato via Telegram</h2>
+      </div>
+      <div class="chip">
+        Modalità remota<br>
+        Nessun Wi-Fi di casa richiesto
+      </div>
+    </div>
+
+    <div class="status-block">
+      <div class="status-title">Modalità</div>
+      <div class="status-row">
+        <span>Connessione</span>
+        <span class="badge badge-remote">Cellulare / Dati ➜ Telegram ➜ ESP32</span>
+      </div>
+      <div class="status-row">
+        <span>Note</span>
+        <span class="badge badge-note">I dettagli arrivano nella chat Telegram TENET</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-on" onclick="openTelegram('LED_ON')">LED ON</button>
+      <button class="btn-off" onclick="openTelegram('LED_OFF')">LED OFF</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-status" onclick="openTelegram('STATUS')">STATO</button>
+      <button class="btn-sensor" onclick="openTelegram('SENSOR')">SENSORE</button>
+    </div>
+
+    <div class="log-block" id="log">
+      <div class="log-title">Log azioni</div>
+      <!-- righe aggiunte via JS -->
+    </div>
+
+    <div class="foot">
+      TENET · Controllo remoto via Telegram · ESP32 a casa sempre connesso alla sua Wi-Fi
+    </div>
+  </div>
+
+<script>
+  // 🔁 funzione per log locale
+  function addLogLine(text) {
+    const log = document.getElementById('log');
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const timeSpan = document.createElement('span');
+    timeSpan.className = 'time';
+    timeSpan.textContent = `[${hh}:${mm}:${ss}]`;
+    line.appendChild(timeSpan);
+    line.appendChild(document.createTextNode(text));
+    log.appendChild(line);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  // Sostituisci IL_TUO_BOT con il NOME del tuo bot, senza @
+  const BOT_USERNAME = "ImbutoControlBot";
+
+  function openTelegram(command) {
+    addLogLine(`Apro Telegram con comando remoto: ${command}`);
+    // Deep link: genera /start <command> per il bot
+    const url = `https://t.me/${BOT_USERNAME}?start=${encodeURIComponent(command)}`;
+    window.location.href = url;
+  }
+
+  window.onload = () => {
+    addLogLine("TENET Remote pronto. Tocca un pulsante per aprire Telegram con il comando precompilato.");
+  };
+</script>
+</body>
+</html>
+
